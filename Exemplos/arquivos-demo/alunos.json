@@ -1,0 +1,18 @@
+{
+  "turma": "Desenvolvimento Web",
+  "semestre": "2025.1",
+  "alunos": [
+    {
+      "nome": "Ana Silva",
+      "nota": 9.5
+    },
+    {
+      "nome": "Bruno Costa",
+      "nota": 8
+    },
+    {
+      "nome": "Carla Dias",
+      "nota": 9
+    }
+  ]
+}
