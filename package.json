@@ -20,5 +20,8 @@
   "homepage": "https://github.com/Otaviocuriel/fullstack-web-mobile#readme",
   "devDependencies": {
     "@types/node": "^25.6.0"
+  },
+  "dependencies": {
+    "fastify": "^5.8.5"
   }
 }
