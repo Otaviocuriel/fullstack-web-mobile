@@ -1,33 +1,28 @@
-// ============================================
-// EXERCÍCIO: PERSISTÊNCIA COM NEDB + FASTIFY
-// Versão JavaScript
-// ============================================
-
 const fastify = require('fastify')({ logger: true });
 const Datastore = require('@seald-io/nedb');
 
 const db = new Datastore({
-  filename: 'jogos.db',
+  filename: 'Ensino.db',
   autoload: true,
   timestampData: true,
 });
 
-fastify.get('/jogos', async (request, reply) => {
-  const jogos = await db.findAsync({});
-  return reply.send(jogos);
+fastify.get('/Ensino', async (request, reply) => {
+  const Ensino = await db.findAsync({});
+  return reply.send(Ensino);
 });
 
-fastify.post('/jogos', async (request, reply) => {
-  const { titulo, genero, ano, nota } = request.body;
+fastify.post('/Ensino', async (request, reply) => {
+  const { nome, escola, truma, nota } = request.body;
 
-  const novoJogo = await db.insertAsync({
-    titulo,
-    genero,
-    ano,
+  const novoEnsino = await db.insertAsync({
+    nome,
+    escola,
+    truma,
     nota,
   });
 
-  return reply.status(201).send(novoJogo);
+  return reply.status(201).send(novoEnsino);
 });
 
 fastify.listen({ port: 3000, host: '0.0.0.0' }, (err) => {
