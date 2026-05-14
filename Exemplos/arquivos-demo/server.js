@@ -13,15 +13,15 @@ const fastify = require('fastify')({
 // ---- PLUGINS GLOBAIS ----
 // Registrados aqui, afetam TODAS as rotas
 fastify.register(require('@fastify/cors'), { origin: '*' });
-fastify.register(require('./src/plugins/logger'));
-fastify.register(require('./src/plugins/util'));
+fastify.register(require('../../src/plugins/logger'));
+fastify.register(require('../../src/plugins/util'));
 
 // ---- ROTAS COM AUTENTICAÇÃO ----
 // O plugin de auth é registrado JUNTO com as rotas de produto
 // Graças ao encapsulamento, o auth só afeta as rotas dentro deste register
 fastify.register(async function rotasProtegidas(instance) {
-  await instance.register(require('./src/plugins/auth'));
-  await instance.register(require('./src/routes/produtoRoutes'));
+  await instance.register(require('../../src/plugins/auth'));
+  await instance.register(require('../../src/routes/produtoRoutes'));
 });
 
 // ---- ROTA RAIZ (fora do escopo de auth) ----
