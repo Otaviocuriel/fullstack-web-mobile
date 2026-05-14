@@ -7,6 +7,10 @@
 const fp = require('fastify-plugin');
 
 async function authPlugin(fastify, options) {
+  // Registrar plugin @fastify/jwt para suporte a JWT
+  fastify.register(require('@fastify/jwt'), {
+    secret: process.env.JWT_SECRET || 'meu_super_segredo'
+  });
   // DECORATOR: adiciona propriedade 'usuario' ao request
   // Decorators estendem objetos existentes sem modificar o código original
   // É como instalar um acessório novo no carro
@@ -20,27 +24,33 @@ async function authPlugin(fastify, options) {
       return; // Permite acesso sem token
     }
 
-    const token = request.headers['authorization'];
+    const authHeader = request.headers['authorization'];
 
     // Rotas protegidas: POST, PUT, DELETE precisam de token
-    if (!token) {
+    if (!authHeader) {
       return reply.code(401).send({
         sucesso: false,
         erro: 'Token de autenticação não fornecido',
-        dica: 'Envie o header: Authorization: Bearer meu-token-secreto'
+        dica: 'Envie o header: Authorization: Bearer <seu-jwt-token>'
       });
     }
 
-    // Validação simples do token (em produção, usar JWT)
-    if (token !== 'Bearer meu-token-secreto') {
-      return reply.code(403).send({
-        sucesso: false,
-        erro: 'Token inválido'
-      });
+    // Extrai o token (Bearer <token>)
+    const parts = authHeader.split(' ');
+    if (parts.length !== 2 || parts[0] !== 'Bearer') {
+      return reply.code(401).send({ sucesso: false, erro: 'Formato do header Authorization inválido' });
     }
 
-    // Se o token é válido, decoramos o request com dados do usuário
-    request.usuario = { id: 1, nome: 'Admin', role: 'admin' };
+    const token = parts[1];
+
+    // Valida o JWT utilizando o método fornecido pelo plugin
+    try {
+      const payload = await fastify.jwt.verify(token);
+      // Decora o request com os dados do usuário a partir do payload
+      request.usuario = payload;
+    } catch (err) {
+      return reply.code(403).send({ sucesso: false, erro: 'Token inválido ou expirado' });
+    }
   });
 
   console.log('Plugin de autenticação registrado!');
